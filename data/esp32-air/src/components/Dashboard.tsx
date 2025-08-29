@@ -17,7 +17,6 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import addGas from "@/libs/AddGas";
 import addTemp from "@/libs/AddTemp";
-import CHAD from "./CHAD";
 
 export default function Dashboard() {
   const [tempsData, setTempsData] = React.useState<ChartData[]>([]);
@@ -222,7 +221,6 @@ export default function Dashboard() {
             </TabContext>
           </div>
           <div className="w-full lg:max-w-[50%] m-4">
-            <CHAD />
           </div>
         </div>
       </>

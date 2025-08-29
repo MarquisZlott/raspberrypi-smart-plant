@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import cors from 'cors';
 import temperature from "./routes/TemperatureRoutes";
 import gas from "./routes/GasRoutes";
-import chad from "./routes/ChadRoutes";
 
 dotenv.config();
 
@@ -31,7 +30,6 @@ mongoose
 
 app.use("/api/temps", temperature)
 app.use("/api/gases", gas)
-app.use("/api/chad", chad)
   
 app.get("/", (req: Request, res: Response) => {
   res.send("Web Backend is running!");
