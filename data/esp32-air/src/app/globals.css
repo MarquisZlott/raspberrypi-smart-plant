@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.chat-bubble {
+  position: relative;
+  background: #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-left: 1rem;
+  max-width: 80%;
+}
+
+.chat-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 1rem solid transparent;
+  border-top-color: #e2e8f0;
+  border-bottom: 0;
+  margin-left: -1rem;
+  margin-bottom: -1rem;
+  transform: rotate(180deg);
+}

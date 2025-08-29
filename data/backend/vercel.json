@@ -1,0 +1,22 @@
+{
+    "builds": [
+        {
+            "src": "src/**/*.ts",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/gases/(.*)",
+            "dest": "src/routes/GasRoutes.ts"
+        },
+        {
+            "src": "/api/temps/(.*)",
+            "dest": "src/routes/TemperatureRoutes.ts"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "src/index.ts"
+        }
+    ]
+}
