@@ -1,5 +1,5 @@
 export default async function addTemp(c: number, humid: number) {
-    const response = await fetch(`https://esp32-air-lbf5.vercel.app/api/temps`, {
+    const response = await fetch(`https://smart-plant-lbf5.vercel.app/api/temps`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

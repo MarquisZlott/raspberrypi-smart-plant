@@ -39,7 +39,7 @@ export default function HeaderBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            ESP32-AIR
+            Smart Plant
           </Typography>
         </Toolbar>
       </AppBar>

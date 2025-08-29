@@ -1,5 +1,5 @@
 export default async function getTempsData() {
-    const response = await fetch(`https://esp32-air-lbf5.vercel.app/api/temps`, {
+    const response = await fetch(`https://smart-plant-lbf5.vercel.app/api/temps`, {
         method: "GET",
     });
 

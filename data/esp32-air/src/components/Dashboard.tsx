@@ -159,31 +159,31 @@ export default function Dashboard() {
           />
           <GaugeComponent
             width={150}
-            value={lpgGauge}
+            value={lpgGauge} //TODO
             min={0}
-            max={10000}
-            text="LPG (ppm)"
+            max={100000}
+            text="light (lux)"
           />
           <GaugeComponent
             width={150}
-            value={coGauge}
+            value={coGauge} //TODO
             min={0}
-            max={10000}
-            text="CO (ppm)"
+            max={100}
+            text="moisture (%)"
           />
           <GaugeComponent
             width={150}
-            value={co2Gauge}
-            min={0}
-            max={10000}
-            text="CO2 (ppm)"
+            value={co2Gauge} //TODO
+            min={-16}
+            max={16}
+            text="acceleration (m/s²)"
           />
           <GaugeComponent
             width={150}
-            value={smokeGauge}
-            min={0}
-            max={10000}
-            text="Smoke (ppm)"
+            value={smokeGauge} //TODO
+            min={-250}
+            max={250}
+            text="rotation (°/s)"
           />
         </div>
 

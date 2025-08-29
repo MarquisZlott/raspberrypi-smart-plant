@@ -1,5 +1,5 @@
 export default async function addGas(lpg: number, co: number, co2: number, smoke: number) {
-    const response = await fetch(`https://esp32-air-lbf5.vercel.app/api/gases`, {
+    const response = await fetch(`https://smart-plant-lbf5.vercel.app/api/gases`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

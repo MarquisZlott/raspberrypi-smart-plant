@@ -13,7 +13,7 @@ const app: Express = express();
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/mydatabase";
 
 const corsOptions = {
-  origin: 'https://esp32-air.vercel.app', // Allow only this origin
+  origin: 'https://smart-plant.vercel.app', // Allow only this origin
   // origin: 'http://localhost:3000', // Allow only this origin
   methods: 'GET',
 };
