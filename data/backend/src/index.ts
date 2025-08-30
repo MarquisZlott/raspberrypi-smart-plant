@@ -3,9 +3,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from 'cors';
-import temperature from "./routes/TemperatureRoutes";
-import gas from "./routes/GasRoutes";
 
+import sensor from "./routes/SensorRoutes";
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
@@ -28,8 +27,7 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 
-app.use("/api/temps", temperature)
-app.use("/api/gases", gas)
+app.use("/api/sensor", sensor)
   
 app.get("/", (req: Request, res: Response) => {
   res.send("Web Backend is running!");
