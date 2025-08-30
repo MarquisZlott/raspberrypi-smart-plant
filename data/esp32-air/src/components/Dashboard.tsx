@@ -162,28 +162,28 @@ export default function Dashboard() {
             value={lpgGauge} //TODO
             min={0}
             max={100000}
-            text="light (lux)"
+            text="Light (lux)"
           />
           <GaugeComponent
             width={150}
             value={coGauge} //TODO
             min={0}
             max={100}
-            text="moisture (%)"
+            text="Moisture (%)"
           />
           <GaugeComponent
             width={150}
             value={co2Gauge} //TODO
             min={-16}
             max={16}
-            text="acceleration (m/s²)"
+            text="Acceleration (m/s²)"
           />
           <GaugeComponent
             width={150}
             value={smokeGauge} //TODO
             min={-250}
             max={250}
-            text="rotation (°/s)"
+            text="Rotation (°/s)"
           />
         </div>
 
@@ -194,10 +194,10 @@ export default function Dashboard() {
                 <TabList onChange={handleChange}>
                   <Tab label="Temperature" value="1" />
                   <Tab label="Humidity" value="2" />
-                  <Tab label="LPG" value="3" />
-                  <Tab label="CO" value="4" />
-                  <Tab label="CO2" value="5" />
-                  <Tab label="Smoke" value="6" />
+                  <Tab label="Light" value="3" />
+                  <Tab label="Moisture" value="4" />
+                  <Tab label="Acceleration" value="5" />
+                  <Tab label="Rotation" value="6" />
                 </TabList>
               </Box>
               <TabPanel value="1">
