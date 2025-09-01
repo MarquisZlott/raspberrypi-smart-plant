@@ -2,245 +2,109 @@
 import React from "react";
 import GaugeComponent from "./GaugeComponent/GaugeComponent";
 import ChartComponent from "./ChartComponent/ChartComponent";
-import { ChartData } from "@/interfaces/DataInterface";
-import getTempsData, { getBlynkHumid, getBlynkTemp } from "@/libs/GetTempsData";
-import getGasesData, {
-  getBlynkCo,
-  getBlynkCo2,
-  getBlynkLpg,
-  getBlynkSmoke,
-} from "@/libs/GetGasesData";
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import addGas from "@/libs/AddGas";
-import addTemp from "@/libs/AddTemp";
+import { fetchSensors, SensorRow } from "@/libs/sensors";
+
+export type ChartData = { date: string; value: number };
 
 export default function Dashboard() {
-  const [tempsData, setTempsData] = React.useState<ChartData[]>([]);
-  const [humidsData, setHumidsData] = React.useState<ChartData[]>([]);
-  const [lpgsData, setLpgsData] = React.useState<ChartData[]>([]);
-  const [cosData, setCosData] = React.useState<ChartData[]>([]);
-  const [co2sData, setCo2sData] = React.useState<ChartData[]>([]);
-  const [smokesData, setSmokesData] = React.useState<ChartData[]>([]);
+  const [tempSeries, setTempSeries] = React.useState<ChartData[]>([]);
+  const [humidSeries, setHumidSeries] = React.useState<ChartData[]>([]);
+  const [lightSeries, setLightSeries] = React.useState<ChartData[]>([]);
+  const [moistureSeries, setMoistureSeries] = React.useState<ChartData[]>([]);
+  const [accelSeries, setAccelSeries] = React.useState<ChartData[]>([]);
+  const [rotationSeries, setRotationSeries] = React.useState<ChartData[]>([]);
 
   const [tempGauge, setTempGauge] = React.useState<number>(0);
   const [humidGauge, setHumidGauge] = React.useState<number>(0);
-  const [lpgGauge, setLpgGauge] = React.useState<number>(0);
-  const [coGauge, setCoGauge] = React.useState<number>(0);
-  const [co2Gauge, setCo2Gauge] = React.useState<number>(0);
-  const [smokeGauge, setSmokeGauge] = React.useState<number>(0);
+  const [lightGauge, setLightGauge] = React.useState<number>(0);
+  const [moistureGauge, setMoistureGauge] = React.useState<number>(0);
+  const [accelGauge, setAccelGauge] = React.useState<number>(0);
+  const [rotationGauge, setRotationGauge] = React.useState<number>(0);
 
   const [isLoading, setIsLoading] = React.useState(true);
+  const [tab, setTab] = React.useState<"1" | "2" | "3" | "4" | "5" | "6">("1");
 
-  const fetchData = async () => {
+  const toSeries = (rows: SensorRow[], key: keyof SensorRow): ChartData[] =>
+    rows
+      .slice() // copy
+      .reverse() // optional: oldest->newest for charts
+      .map((r) => ({ date: new Date(r.date).toISOString(), value: r[key] as number }));
+
+  const fetchAndBind = async () => {
     try {
-      const [bTemp, bHumid, bLpg, bCo, bSmoke, bCo2] = await Promise.all([
-        getBlynkTemp(),
-        getBlynkHumid(),
-        getBlynkLpg(),
-        getBlynkCo(),
-        getBlynkSmoke(),
-        getBlynkCo2(),
-      ]);
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [x, y, getTemps, getGases] = await Promise.all([
-        // addTemp(25, 55),
-        // addGas(12, 11, 13, 20),
-        addTemp(bTemp, bHumid),
-        addGas(bLpg, bCo, bCo2, bSmoke),
-        getTempsData(),
-        getGasesData(),
-      ]);
-
+      const rows = await fetchSensors(); // newest first from backend
       setIsLoading(false);
+      if (!rows.length) return;
 
-      // console.log("temp", bTemp);
-      // console.log("humid", bHumid);
-      // console.log("lpg", bLpg);
-      // console.log("co", bCo);
-      // console.log("smoke", bSmoke);
-      // console.log("co2", bCo2);
-      console.log("temps", getTemps);
-      console.log("gases", getGases);
+      // Build series
+      setTempSeries(toSeries(rows, "temperature"));
+      setHumidSeries(toSeries(rows, "humidity"));
+      setLightSeries(toSeries(rows, "lightIntensity"));
+      setMoistureSeries(toSeries(rows, "soilMoisture"));
+      setAccelSeries(toSeries(rows, "acceleration"));
+      setRotationSeries(toSeries(rows, "rotation"));
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formmattedTempsData = getTemps.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.c,
-      }));
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedHumidsData = getTemps.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.humid,
-      }));
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedLpgsData = getGases.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.lpg,
-      }));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedCosData = getGases.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.co,
-      }));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedCo2sData = getGases.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.co2,
-      }));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedSmokesData = getGases.data.map((item: any) => ({
-        date: new Date(item.date).toISOString(),
-        value: item.smoke,
-      }));
-
-      setTempsData(formmattedTempsData);
-      setHumidsData(formattedHumidsData);
-      setLpgsData(formattedLpgsData);
-      setCosData(formattedCosData);
-      setCo2sData(formattedCo2sData);
-      setSmokesData(formattedSmokesData);
-
-      setTempGauge(formmattedTempsData[0].value);
-      setHumidGauge(formattedHumidsData[0].value);
-      setLpgGauge(formattedLpgsData[0].value);
-      setCoGauge(formattedCosData[0].value);
-      setCo2Gauge(formattedCo2sData[0].value);
-      setSmokeGauge(formattedSmokesData[0].value);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+      // Gauges from LATEST record (rows[0] is newest due to backend sort)
+      const latest = rows[0];
+      setTempGauge(latest.temperature);
+      setHumidGauge(latest.humidity);
+      setLightGauge(latest.lightIntensity);
+      setMoistureGauge(latest.soilMoisture);
+      setAccelGauge(latest.acceleration);
+      setRotationGauge(latest.rotation);
+    } catch (e) {
+      console.error(e);
       setIsLoading(false);
     }
-  };
-
-  const [value, setValue] = React.useState("1");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
   };
 
   React.useEffect(() => {
-    console.log("loaded");
-    fetchData();
-    const intervalId = setInterval(fetchData, 10000); // 10 seconds
-
-    return () => clearInterval(intervalId);
+    fetchAndBind();
+    const id = setInterval(fetchAndBind, 10_000); // 10s polling
+    return () => clearInterval(id);
   }, []);
 
-  const dashboardContent = React.useMemo(() => {
-    if (isLoading && tempsData.length === 0) {
-      return <div>Loading...</div>;
-    }
+  if (isLoading) return <div>Loading...</div>;
 
-    return (
-      <>
-        <h1 className="text-3xl font-bold p-3">Dashboard</h1>
+  return (
+    <div>
+      <h1 className="text-3xl font-bold p-3">Dashboard</h1>
 
-        <div className="flex flex-row flex-wrap gap-3 p-4">
-          <GaugeComponent
-            width={150}
-            value={tempGauge}
-            min={-45}
-            max={85}
-            text="Temperature (°C)"
-          />
-          <GaugeComponent
-            width={150}
-            value={humidGauge}
-            min={0}
-            max={100}
-            text="Humidity (%)"
-          />
-          <GaugeComponent
-            width={150}
-            value={lpgGauge} //TODO
-            min={0}
-            max={100000}
-            text="Light (lux)"
-          />
-          <GaugeComponent
-            width={150}
-            value={coGauge} //TODO
-            min={0}
-            max={100}
-            text="Moisture (%)"
-          />
-          <GaugeComponent
-            width={150}
-            value={co2Gauge} //TODO
-            min={-16}
-            max={16}
-            text="Acceleration (m/s²)"
-          />
-          <GaugeComponent
-            width={150}
-            value={smokeGauge} //TODO
-            min={-250}
-            max={250}
-            text="Rotation (°/s)"
-          />
+      <div className="flex flex-row flex-wrap gap-3 p-4">
+        <GaugeComponent width={150} value={tempGauge}   min={-45}  max={85}   text="Temperature (°C)" />
+        <GaugeComponent width={150} value={humidGauge}  min={0}    max={100}  text="Humidity (%)" />
+        <GaugeComponent width={150} value={lightGauge}  min={0}    max={100000} text="Light (lux)" />
+        <GaugeComponent width={150} value={moistureGauge} min={0}  max={100}  text="Moisture (%)" />
+        <GaugeComponent width={150} value={accelGauge}  min={-16}  max={16}   text="Acceleration (m/s²)" />
+        <GaugeComponent width={150} value={rotationGauge} min={-250} max={250} text="Rotation (°/s)" />
+      </div>
+
+      {/* Replace your MUI tabs if you want; below is a simple version */}
+      <div className="flex flex-wrap gap-4 p-4">
+        <div className="w-full lg:max-w-[45%]">
+          {/* Temperature */}
+          <h2 className="text-xl font-semibold mb-2">Temperature</h2>
+          <ChartComponent data={tempSeries} />
+          {/* Humidity */}
+          <h2 className="text-xl font-semibold mt-6 mb-2">Humidity</h2>
+          <ChartComponent data={humidSeries} />
+          {/* Light */}
+          <h2 className="text-xl font-semibold mt-6 mb-2">Light</h2>
+          <ChartComponent data={lightSeries} />
         </div>
 
-        <div className="flex flex-row flex-wrap justify-between">
-          <div className="w-full lg:max-w-[45%]">
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList onChange={handleChange}>
-                  <Tab label="Temperature" value="1" />
-                  <Tab label="Humidity" value="2" />
-                  <Tab label="Light" value="3" />
-                  <Tab label="Moisture" value="4" />
-                  <Tab label="Acceleration" value="5" />
-                  <Tab label="Rotation" value="6" />
-                </TabList>
-              </Box>
-              <TabPanel value="1">
-                <ChartComponent data={tempsData} />
-              </TabPanel>
-              <TabPanel value="2">
-                <ChartComponent data={humidsData} />
-              </TabPanel>
-              <TabPanel value="3">
-                <ChartComponent data={lpgsData} />
-              </TabPanel>
-              <TabPanel value="4">
-                <ChartComponent data={cosData} />
-              </TabPanel>
-              <TabPanel value="5">
-                <ChartComponent data={co2sData} />
-              </TabPanel>
-              <TabPanel value="6">
-                <ChartComponent data={smokesData} />
-              </TabPanel>
-            </TabContext>
-          </div>
-          <div className="w-full lg:max-w-[50%] m-4">
-          </div>
+        <div className="w-full lg:max-w-[50%]">
+          {/* Moisture */}
+          <h2 className="text-xl font-semibold mb-2">Moisture</h2>
+          <ChartComponent data={moistureSeries} />
+          {/* Acceleration */}
+          <h2 className="text-xl font-semibold mt-6 mb-2">Acceleration</h2>
+          <ChartComponent data={accelSeries} />
+          {/* Rotation */}
+          <h2 className="text-xl font-semibold mt-6 mb-2">Rotation</h2>
+          <ChartComponent data={rotationSeries} />
         </div>
-      </>
-    );
-  }, [
-    isLoading,
-    tempsData,
-    humidsData,
-    lpgsData,
-    co2sData,
-    cosData,
-    smokesData,
-    tempGauge,
-    humidGauge,
-    lpgGauge,
-    coGauge,
-    co2Gauge,
-    smokeGauge,
-    value,
-  ]);
-
-  return <div>{dashboardContent}</div>;
+      </div>
+    </div>
+  );
 }
